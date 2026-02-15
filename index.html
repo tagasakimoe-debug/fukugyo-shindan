@@ -1,0 +1,160 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>副業適性診断アプリ</title>
+  <meta name="description" content="30問の診断で、あなたに合う副業タイプを可視化。メイン・サブタイプと8タイプのスコアを表示します。">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="副業適性診断アプリ">
+  <meta property="og:description" content="30問の診断で、あなたに合う副業タイプを可視化。">
+  <meta property="og:image" content="images/og-image.png">
+  <meta property="og:locale" content="ja_JP">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="bg-layer bg-layer-a" aria-hidden="true"></div>
+  <div class="bg-layer bg-layer-b" aria-hidden="true"></div>
+
+  <main class="app" id="app">
+    <header class="app-header">
+      <p class="eyebrow">副業診断 WEB APP</p>
+      <h1>副業適性診断</h1>
+      <p class="lead">30問の診断で、あなたの強みと相性のよい副業タイプを見つけます。</p>
+    </header>
+
+    <section id="view-home" class="view">
+      <div class="card hero-card">
+        <h2>診断の流れ</h2>
+        <ol class="flow-list">
+          <li>プロフィール4問に回答</li>
+          <li>本診断30問に回答（5段階）</li>
+          <li>結果を確認して、詳細レポートを受け取る</li>
+        </ol>
+        <p class="meta-text">所要時間の目安: 約5分</p>
+        <button id="start-button" class="btn btn-primary" type="button">診断をはじめる</button>
+      </div>
+    </section>
+
+    <section id="view-profile" class="view is-hidden">
+      <form id="profile-form" class="card form-card">
+        <h2>STEP1 プロフィール質問（4問）</h2>
+        <div id="profile-fields"></div>
+        <p id="profile-error" class="error-message" role="alert"></p>
+        <div class="actions">
+          <button id="profile-cancel" class="btn btn-ghost" type="button">TOPへ戻る</button>
+          <button class="btn btn-primary" type="submit">次へ進む</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="view-quiz" class="view is-hidden">
+      <div class="card quiz-card">
+        <div class="quiz-head">
+          <p id="quiz-progress-text" class="quiz-progress-text">Q1 / 30</p>
+          <div class="progress-track" aria-hidden="true">
+            <div id="quiz-progress-bar" class="progress-fill"></div>
+          </div>
+        </div>
+        <p id="quiz-axis" class="axis-tag"></p>
+        <h2 id="quiz-question" class="quiz-question"></h2>
+        <div id="quiz-options" class="quiz-options" role="list"></div>
+        <div class="actions quiz-actions">
+          <button id="quiz-back" class="btn btn-ghost" type="button">戻る</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-lead" class="view is-hidden">
+      <form id="lead-form" class="card form-card">
+        <h2>結果受け取り情報</h2>
+        <p class="meta-text">結果表示と集計のため、以下の情報を入力してください。</p>
+
+        <label class="field">
+          <span>お名前 <em>必須</em></span>
+          <input id="lead-name" name="name" type="text" autocomplete="name" required>
+        </label>
+
+        <label class="field">
+          <span>メールアドレス <em>必須</em></span>
+          <input id="lead-email" name="email" type="email" autocomplete="email" required>
+        </label>
+
+        <label class="field">
+          <span>LINE名（任意）</span>
+          <input id="lead-line-name" name="line_name" type="text" autocomplete="off">
+        </label>
+
+        <label class="check-field">
+          <input id="lead-consent" type="checkbox" required>
+          <span>診断データの送信とプライバシーポリシーに同意する</span>
+        </label>
+
+        <a class="policy-link" href="#" target="_blank" rel="noopener noreferrer">プライバシーポリシー</a>
+
+        <p id="lead-error" class="error-message" role="alert"></p>
+
+        <div class="actions">
+          <button id="lead-back" class="btn btn-ghost" type="button">質問に戻る</button>
+          <button id="lead-submit" class="btn btn-primary" type="submit">結果を見る</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="view-result" class="view is-hidden">
+      <div class="card result-card" id="result-card">
+        <h2>あなたの副業タイプ診断結果</h2>
+
+        <div class="result-top-grid">
+          <article class="type-card main-type">
+            <p class="type-rank">MAIN TYPE</p>
+            <h3 id="main-type-name"></h3>
+            <p id="main-type-copy" class="type-copy"></p>
+            <p id="main-type-desc" class="type-desc"></p>
+          </article>
+
+          <article class="type-card sub-type">
+            <p class="type-rank">SUB TYPE</p>
+            <h3 id="sub-type-name"></h3>
+            <p id="sub-type-copy" class="type-copy"></p>
+            <p id="sub-type-desc" class="type-desc"></p>
+          </article>
+        </div>
+
+        <section class="chart-section">
+          <h3>8タイプのスコア</h3>
+          <canvas id="radar-chart" width="320" height="320" aria-label="副業タイプスコアチャート"></canvas>
+          <ul id="score-list" class="score-list"></ul>
+        </section>
+
+        <section class="line-section">
+          <h3>詳しい診断レポートを受け取る</h3>
+          <p>LINE公式アカウント登録で、詳細レポートと学習ロードマップをお届けします。</p>
+          <div class="line-cta">
+            <img class="qr-image" src="images/line-qr.png" alt="LINE QRコード">
+            <a id="line-link" class="btn btn-primary" href="#" target="_blank" rel="noopener noreferrer">LINEで受け取る</a>
+          </div>
+        </section>
+
+        <section class="external-section">
+          <a id="google-form-link" class="btn btn-ghost" href="#" target="_blank" rel="noopener noreferrer">追加アンケートに回答する</a>
+        </section>
+
+        <div class="actions result-actions">
+          <button id="share-button" class="btn btn-ghost" type="button">結果をシェアする</button>
+          <button id="restart-button" class="btn btn-primary" type="button">もう一度診断する</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <script src="js/questions.js"></script>
+  <script src="js/scoring.js"></script>
+  <script src="js/results.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
